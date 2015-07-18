@@ -1,10 +1,14 @@
 package uk.ac.ebi.pride.tools.xtandemtsvconverter.cli;
 
-import de.proteinms.xtandemparser.xtandem.*;
+import de.proteinms.xtandemparser.xtandem.Domain;
+import de.proteinms.xtandemparser.xtandem.Peptide;
 import uk.ac.ebi.pride.tools.xtandemtsvconverter.util.PSM;
+import uk.ac.ebi.pride.tools.xtandemtsvconverter.util.SimpleXTandemParser;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by jg on 16.07.15.
@@ -113,38 +117,8 @@ public class XtandemCliConverter {
     }
 
     protected static List<PSM> extractPsms(File inputFile) throws Exception {
-        XTandemFile xtandemFile = new XTandemFile(inputFile.getAbsolutePath());
-        PeptideMap peptideMap = xtandemFile.getPeptideMap();
-        ProteinMap proteinMap = xtandemFile.getProteinMap();
-        List<PSM> psms = new ArrayList<PSM>();
-
-        if (xtandemFile.getSpectraNumber() < 1)
-            throw new Exception("X!Tandem result file does not contain any results");
-
-        // loop through all spectra
-        int nReliableTarget = 0, nReliableDecoy = 0;
-        Map<String, Integer> sequenceCounts = new HashMap<String, Integer>();
-
-        for (int spectrumIndex = 1; spectrumIndex <= xtandemFile.getSpectraNumber(); spectrumIndex++) {
-            // all peptides for one spectrum
-            List<Peptide> peptides = peptideMap.getAllPeptides(spectrumIndex);
-
-            // rank-1 identification
-            Domain bestDomain = getBestDomainForPeptides(peptides);
-
-            // test whether the identification is a decoy ID
-            Protein protein = proteinMap.getProtein(bestDomain.getProteinKey());
-
-            boolean isDecoy = protein.getDescription().contains("###REV###") || protein.getDescription().contains("###RND###");
-
-            // extract the spectrum index
-            Integer fileSpectrumIndex = new Integer(bestDomain.getDomainID().substring(0, bestDomain.getDomainID().indexOf('.')));
-
-            PSM psm = new PSM(fileSpectrumIndex, bestDomain.getDomainSequence(), protein.getDescription(), isDecoy, bestDomain.getDomainExpect());
-            psms.add(psm);
-        }
-
-        return psms;
+        SimpleXTandemParser simpleXTandemParser = new SimpleXTandemParser(inputFile);
+        return simpleXTandemParser.getPsms();
     }
 
     private static void printUsage() {

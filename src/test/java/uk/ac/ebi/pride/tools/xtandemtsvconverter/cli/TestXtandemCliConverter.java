@@ -6,6 +6,7 @@ import org.junit.Test;
 import uk.ac.ebi.pride.tools.xtandemtsvconverter.util.PSM;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class TestXtandemCliConverter {
     @Test
     public void testGetPsms() throws Exception {
         List<PSM> psms = XtandemCliConverter.extractPsms(testFile);
+        psms = new ArrayList<PSM>(psms);
         Collections.sort(psms);
 
         final double fdr = 0.01;
@@ -45,5 +47,11 @@ public class TestXtandemCliConverter {
         }
 
         Assert.assertEquals(185, psms.size());
+
+        PSM psm10 = psms.get(10);
+        Assert.assertTrue(psm10.getSpectrumIndex() == 5746 || psm10.getSpectrumIndex() == 2775); // both identified as same with same expect
+        Assert.assertEquals(0.013, psm10.getExpect(), 0.00000000001);
+        Assert.assertEquals("CISHEYR", psm10.getSequence());
+        Assert.assertFalse(psm10.isDecoy());
     }
 }

@@ -1,5 +1,7 @@
 package uk.ac.ebi.pride.tools.xtandemtsvconverter.util;
 
+import java.util.Comparator;
+
 /**
  * Created by jg on 16.07.15.
  */
@@ -40,7 +42,12 @@ public class PSM implements Comparable<PSM>{
 
     @Override
     public int compareTo(PSM o) {
-        return Double.compare(expect, o.getExpect());
+        int result = Double.compare(expect, o.getExpect());
+
+        if (result != 0)
+            return result;
+
+        return String.CASE_INSENSITIVE_ORDER.compare(sequence, o.getSequence());
     }
 
     @Override
