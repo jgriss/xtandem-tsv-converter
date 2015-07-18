@@ -7,3 +7,7 @@ If the source MGF file is available as well, the spectrum's title will be added 
 ```
 java -jar xtandem-tsv-converter.jar [X!Tandem result file] [FDR] [(optional) source MGF file]
 ```
+
+## Download
+
+The compiled jar file of the latest version can be found in the [releases](https://github.com/jgriss/xtandem-tsv-converter/releases) section.
