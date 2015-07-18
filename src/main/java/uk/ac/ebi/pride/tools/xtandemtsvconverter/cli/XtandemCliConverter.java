@@ -116,7 +116,7 @@ public class XtandemCliConverter {
 
     protected static List<PSM> extractPsms(File inputFile) throws Exception {
         SimpleXTandemParser simpleXTandemParser = new SimpleXTandemParser(inputFile);
-        return simpleXTandemParser.getPsms();
+        return new ArrayList<PSM>(simpleXTandemParser.getPsms());
     }
 
     private static void printUsage() {
