@@ -40,8 +40,14 @@ public class XtandemCliConverter {
                 titles = loadTitlesFromMgf(mgfFile);
             }
 
+            // load the sequences
+            List<String> sequences = null;
+            if (mgfFile != null) {
+                sequences = loadSequencesFromFile(mgfFile);
+            }
+
             // convert the file
-            convertFile(inputFile, outputFile, fdr, titles);
+            convertFile(inputFile, outputFile, fdr, titles, sequences);
 
             System.out.println("Results written to " + outputFile);
         }
@@ -52,7 +58,20 @@ public class XtandemCliConverter {
         }
     }
 
+    private static List<String> loadSequencesFromFile(File mgfFile) throws Exception {
+        List<String> sequences = loadPropertyFromMgf(mgfFile, "SEQ=");
+
+        if (sequences.size() < 1)
+            sequences = loadPropertyFromMgf(mgfFile, "SEQUENCE=");
+
+        return sequences;
+    }
+
     private static List<String> loadTitlesFromMgf(File mgfFile) throws Exception {
+        return loadPropertyFromMgf(mgfFile, "TITLE=");
+    }
+
+    private static List<String> loadPropertyFromMgf(File mgfFile, String property) throws Exception {
         if (!mgfFile.exists())
             throw new Exception("Cannot find MGF file: " + mgfFile);
 
@@ -61,10 +80,10 @@ public class XtandemCliConverter {
         String line;
 
         while ((line = reader.readLine()) != null) {
-            if (!line.startsWith("TITLE="))
+            if (!line.startsWith(property))
                 continue;
 
-            titles.add(line.substring("TITLE=".length()).trim());
+            titles.add(line.substring(property.length()).trim());
         }
 
         reader.close();
@@ -72,14 +91,14 @@ public class XtandemCliConverter {
         return titles;
     }
 
-    protected static void convertFile(File inputFile, File outputFile, Double fdr, List<String> titles) throws Exception {
+    protected static void convertFile(File inputFile, File outputFile, Double fdr, List<String> titles, List<String> sequences) throws Exception {
         List<PSM> psms = extractPsms(inputFile);
         Collections.sort(psms);
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
         // write the header
-        writer.write("spectrum_id\tprotein\tsequence\texpect\tis_decoy\tspectrum_title\n");
+        writer.write("spectrum_id\tprotein\tsequence\texpect\tis_decoy\tspectrum_sequence\tspectrum_title\n");
 
         int nTarget = 0, nDecoy = 0;
 
@@ -101,6 +120,13 @@ public class XtandemCliConverter {
             writer.write(String.valueOf(psm.getExpect()) + "\t");
             writer.write(String.valueOf(psm.isDecoy()) + "\t");
 
+            String sequence = "";
+            if (sequences != null) {
+                if (psm.getSpectrumIndex() <= sequences.size()) {
+                    sequence = sequences.get(psm.getSpectrumIndex() - 1);
+                }
+            }
+
             String title = "";
             if (titles != null) {
                 if (psm.getSpectrumIndex() <= titles.size()) {
@@ -108,6 +134,7 @@ public class XtandemCliConverter {
                 }
             }
 
+            writer.write(sequence + "\t");
             writer.write(title + "\n");
         }
 
