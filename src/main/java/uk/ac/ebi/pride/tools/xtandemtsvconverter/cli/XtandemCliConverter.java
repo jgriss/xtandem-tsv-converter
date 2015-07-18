@@ -1,7 +1,5 @@
 package uk.ac.ebi.pride.tools.xtandemtsvconverter.cli;
 
-import de.proteinms.xtandemparser.xtandem.Domain;
-import de.proteinms.xtandemparser.xtandem.Peptide;
 import uk.ac.ebi.pride.tools.xtandemtsvconverter.util.PSM;
 import uk.ac.ebi.pride.tools.xtandemtsvconverter.util.SimpleXTandemParser;
 
@@ -124,23 +122,5 @@ public class XtandemCliConverter {
     private static void printUsage() {
         System.out.println("X!Tandem to TSV converter version 1.0");
         System.out.println("Usage: java -jar xtandem-tsv-converter.jar [input file] [FDR] [(optional) MGF file]");
-    }
-
-    private static Domain getBestDomainForPeptides(List<Peptide> peptides) {
-        double bestExpectScore = Double.MAX_VALUE;
-        Domain bestDomain = null;
-
-        for (Peptide peptide : peptides) {
-            for (Domain domain : peptide.getDomains()) {
-                if (domain.getDomainExpect() < bestExpectScore) {
-                    bestExpectScore = domain.getDomainExpect();
-                    bestDomain = domain;
-                }
-            }
-
-
-        }
-
-        return bestDomain;
     }
 }
