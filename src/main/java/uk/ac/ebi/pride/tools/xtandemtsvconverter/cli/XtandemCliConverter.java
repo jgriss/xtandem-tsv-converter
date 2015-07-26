@@ -1,6 +1,7 @@
 package uk.ac.ebi.pride.tools.xtandemtsvconverter.cli;
 
 import uk.ac.ebi.pride.tools.xtandemtsvconverter.util.PSM;
+import uk.ac.ebi.pride.tools.xtandemtsvconverter.util.PTM;
 import uk.ac.ebi.pride.tools.xtandemtsvconverter.util.SimpleXTandemParser;
 
 import java.io.*;
@@ -98,7 +99,7 @@ public class XtandemCliConverter {
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
         // write the header
-        writer.write("spectrum_id\tprotein\tsequence\texpect\tis_decoy\tspectrum_sequence\tspectrum_title\n");
+        writer.write("spectrum_id\tprotein\tsequence\tptms\texpect\tis_decoy\tspectrum_sequence\tspectrum_title\n");
 
         int nTarget = 0, nDecoy = 0;
 
@@ -117,6 +118,7 @@ public class XtandemCliConverter {
             writer.write(String.valueOf(psm.getSpectrumIndex()) + "\t");
             writer.write(psm.getProteinAccession() + "\t");
             writer.write(psm.getSequence() + "\t");
+            writer.write(buidPtmString(psm.getPtms()) + "\t");
             writer.write(String.valueOf(psm.getExpect()) + "\t");
             writer.write(String.valueOf(psm.isDecoy()) + "\t");
 
@@ -139,6 +141,20 @@ public class XtandemCliConverter {
         }
 
         writer.close();
+    }
+
+    private static String buidPtmString(List<PTM> ptms) {
+        StringBuilder ptmString = new StringBuilder();
+
+        for (int i = 0; i < ptms.size(); i++) {
+            if (i > 0)
+                ptmString.append(",");
+
+            PTM ptm = ptms.get(i);
+            ptmString.append(ptm.getDelta() + "@" + ptm.getPosition());
+        }
+
+        return ptmString.toString();
     }
 
     protected static List<PSM> extractPsms(File inputFile) throws Exception {
