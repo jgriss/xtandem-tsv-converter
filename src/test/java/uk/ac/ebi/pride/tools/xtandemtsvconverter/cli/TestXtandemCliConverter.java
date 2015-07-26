@@ -54,4 +54,26 @@ public class TestXtandemCliConverter {
         Assert.assertEquals("CISHEYR", psm10.getSequence());
         Assert.assertFalse(psm10.isDecoy());
     }
+
+    @Test
+    public void testModifications() throws Exception {
+        List<PSM> psms = XtandemCliConverter.extractPsms(testFile);
+        psms = new ArrayList<PSM>(psms);
+        Collections.sort(psms);
+
+        for (PSM p : psms) {
+            if (p.getSpectrumIndex() == 5106) {
+                Assert.assertEquals("VEMVYSLLSMLGTHDKDDMSR", p.getSequence());
+
+                Assert.assertEquals(2, p.getPtms().size());
+                Assert.assertEquals("M", p.getPtms().get(0).getAa());
+                Assert.assertEquals("M", p.getPtms().get(1).getAa());
+
+                Assert.assertEquals(15.99492, p.getPtms().get(0).getDelta(), 0.00001);
+                Assert.assertEquals(15.99492, p.getPtms().get(1).getDelta(), 0.00001);
+
+                Assert.assertEquals(10, p.getPtms().get(0).getPosition());
+            }
+        }
+    }
 }

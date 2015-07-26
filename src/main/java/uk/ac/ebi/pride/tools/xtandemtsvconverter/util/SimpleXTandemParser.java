@@ -20,7 +20,11 @@ public class SimpleXTandemParser {
         Map<Integer, List<PSM>> psmsPerSpectrum = new HashMap<Integer, List<PSM>>();
         int currentGroupId = 0;
         String currentAccession = null;
+        String currentSequence = null;
+        double currentExpect = 0;
+        int currentStart = 0;
         boolean isDecoy = false;
+        List<PTM> ptms = new ArrayList<PTM>();
 
         while ((line = reader.readLine()) != null) {
             line = line.trim();
@@ -37,16 +41,34 @@ public class SimpleXTandemParser {
                 currentGroupId = new Integer(getFieldValue("id", line));
             }
             else if (line.startsWith("<domain")) {
+                currentSequence = getFieldValue("seq", line);
+                currentExpect = new Double(getFieldValue("expect", line));
+                currentStart = new Integer(getFieldValue("start", line));
+            }
+            else if (line.startsWith("<aa")) {
+                if (!line.contains("modified"))
+                    continue;
+
+                String aa = getFieldValue("type", line);
+                int ptmStart = new Integer(getFieldValue("at", line));
+                double ptmDelta = new Double(getFieldValue("modified", line));
+
+                ptms.add(new PTM(aa, ptmStart - currentStart + 1, ptmDelta));
+            }
+            else if (line.startsWith("</domain")) {
                 PSM psm = new PSM(
                         currentGroupId,
-                        getFieldValue("seq", line),
+                        currentSequence,
                         currentAccession,
                         isDecoy,
-                        new Double(getFieldValue("expect", line)));
+                        currentExpect,
+                        ptms);
 
                 if (!psmsPerSpectrum.containsKey(currentGroupId))
                     psmsPerSpectrum.put(currentGroupId, new ArrayList<PSM>());
                 psmsPerSpectrum.get(currentGroupId).add(psm);
+
+                ptms = new ArrayList<PTM>();
             }
         }
 

@@ -1,6 +1,8 @@
 package uk.ac.ebi.pride.tools.xtandemtsvconverter.util;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by jg on 16.07.15.
@@ -11,13 +13,15 @@ public class PSM implements Comparable<PSM>{
     private final boolean isDecoy;
     private final double expect;
     private final int spectrumIndex;
+    private final List<PTM> ptms;
 
-    public PSM(int spectrumIndex, String sequence, String proteinAccession, boolean isDecoy, double expect) {
+    public PSM(int spectrumIndex, String sequence, String proteinAccession, boolean isDecoy, double expect, List<PTM> ptms) {
         this.spectrumIndex = spectrumIndex;
         this.sequence = sequence;
         this.proteinAccession = proteinAccession;
         this.isDecoy = isDecoy;
         this.expect = expect;
+        this.ptms = ptms;
     }
 
     public int getSpectrumIndex() {
@@ -38,6 +42,10 @@ public class PSM implements Comparable<PSM>{
 
     public double getExpect() {
         return expect;
+    }
+
+    public List<PTM> getPtms() {
+        return Collections.unmodifiableList(ptms);
     }
 
     @Override
