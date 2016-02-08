@@ -13,14 +13,16 @@ public class PSM implements Comparable<PSM>{
     private final boolean isDecoy;
     private final double expect;
     private final int spectrumIndex;
+    private final double delta;
     private final List<PTM> ptms;
 
-    public PSM(int spectrumIndex, String sequence, String proteinAccession, boolean isDecoy, double expect, List<PTM> ptms) {
+    public PSM(int spectrumIndex, String sequence, String proteinAccession, boolean isDecoy, double expect, double delta, List<PTM> ptms) {
         this.spectrumIndex = spectrumIndex;
         this.sequence = sequence;
         this.proteinAccession = proteinAccession;
         this.isDecoy = isDecoy;
         this.expect = expect;
+        this.delta = delta;
         this.ptms = ptms;
     }
 
@@ -42,6 +44,10 @@ public class PSM implements Comparable<PSM>{
 
     public double getExpect() {
         return expect;
+    }
+
+    public double getDelta() {
+        return delta;
     }
 
     public List<PTM> getPtms() {

@@ -65,6 +65,8 @@ public class TestXtandemCliConverter {
             if (p.getSpectrumIndex() == 5106) {
                 Assert.assertEquals("VEMVYSLLSMLGTHDKDDMSR", p.getSequence());
 
+                Assert.assertEquals(-0.135, p.getDelta(), 0.0);
+
                 Assert.assertEquals(2, p.getPtms().size());
                 Assert.assertEquals("M", p.getPtms().get(0).getAa());
                 Assert.assertEquals("M", p.getPtms().get(1).getAa());

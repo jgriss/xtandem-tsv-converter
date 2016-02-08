@@ -24,6 +24,7 @@ public class SimpleXTandemParser {
         double currentExpect = 0;
         int currentStart = 0;
         boolean isDecoy = false;
+        double currentDelta = 0;
         List<PTM> ptms = new ArrayList<PTM>();
 
         while ((line = reader.readLine()) != null) {
@@ -44,6 +45,7 @@ public class SimpleXTandemParser {
                 currentSequence = getFieldValue("seq", line);
                 currentExpect = new Double(getFieldValue("expect", line));
                 currentStart = new Integer(getFieldValue("start", line));
+                currentDelta = new Double(getFieldValue("delta", line));
             }
             else if (line.startsWith("<aa")) {
                 if (!line.contains("modified"))
@@ -62,6 +64,7 @@ public class SimpleXTandemParser {
                         currentAccession,
                         isDecoy,
                         currentExpect,
+                        currentDelta,
                         ptms);
 
                 if (!psmsPerSpectrum.containsKey(currentGroupId))

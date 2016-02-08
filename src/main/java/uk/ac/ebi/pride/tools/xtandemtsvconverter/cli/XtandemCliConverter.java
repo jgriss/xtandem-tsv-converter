@@ -99,7 +99,7 @@ public class XtandemCliConverter {
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
         // write the header
-        writer.write("spectrum_id\tprotein\tsequence\tptms\texpect\tis_decoy\tspectrum_sequence\tspectrum_title\n");
+        writer.write("spectrum_id\tprotein\tsequence\tptms\texpect\tis_decoy\tspectrum_sequence\tspectrum_title\tdelta\n");
 
         int nTarget = 0, nDecoy = 0;
 
@@ -137,7 +137,8 @@ public class XtandemCliConverter {
             }
 
             writer.write(sequence + "\t");
-            writer.write(title + "\n");
+            writer.write(title + "\t");
+            writer.write(String.valueOf(psm.getDelta()) + "\n");
         }
 
         writer.close();
